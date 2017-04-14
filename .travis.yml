@@ -11,16 +11,31 @@ android:
     - extra-android-m2repository
     - sys-img-armeabi-v7a-android-15
     - sys-img-armeabi-v7a-android-22
+
 env:
   matrix:
+    - ANDROID_SDKS=android-15,sysimg-15  ANDROID_TARGET=android-15  ANDROID_ABI=armeabi-v7a
     - ANDROID_SDKS=android-22,sysimg-22  ANDROID_TARGET=android-22  ANDROID_ABI=armeabi-v7a
+
+before_cache:
+    - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
+cache:
+  directories:                # Cache all dirs under .gradle folder
+    - $HOME/.gradle/daemon      # Cache daemon logs
+    - $HOME/.gradle/native      # Cache library downloaded from the gradle dependency
+    - $HOME/.gradle/wrapper     # Cache the gradle
+
 before_install:
-  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - android list targets
+  - echo no | android create avd --force --name test --target $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
+
 before_script:
   - chmod +x gradlew
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
+
 after_failure:
   - cat $TRAVIS_BUILD_DIR/library/build/outputs/lint-results-debug.xml
   - cat $TRAVIS_BUILD_DIR/library/build/reports/androidTests/connected/index.html
