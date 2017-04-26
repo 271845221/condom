@@ -37,3 +37,4 @@ before_script:
 after_failure:
   - cat $TRAVIS_BUILD_DIR/library/build/outputs/lint-results-debug.xml
   - cat $TRAVIS_BUILD_DIR/library/build/reports/androidTests/connected/index.html
+  - cat $TRAVIS_BUILD_DIR/library/build/reports/androidTests/connected/com.oasisfeng.condom.CondomMiscTest.html
